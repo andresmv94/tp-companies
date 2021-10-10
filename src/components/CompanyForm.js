@@ -123,12 +123,14 @@ function CompanyForm(props) {
       if(data.companyName.trim() === ""){
         setMsg(`El nombre de la empresa no puede ser vacío`);
         setError(true);
+        setSubmitting(false);
         return;
       }
     }else{
       if(data.firstName.trim() === "" || data.firstLastName.trim() === ""){
-        setMsg(`El primer nombre y el primer apellido no pueden ser vacíos`);
+        setMsg(`El primer nombre o el primer apellido no pueden ser vacíos`);
         setError(true);
+        setSubmitting(false);
         return;
       }
     }
