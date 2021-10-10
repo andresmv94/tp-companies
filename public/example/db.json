@@ -19,6 +19,7 @@
   "identificationType": [
     { "id": 1, "value": "nit", "label": "N.I.T" },
     { "id": 2, "value": "cc", "label": "Cedula de ciudadania" },
+    { "id": 2, "value": "ce", "label": "Cedula de extrangería" },
     { "id": 2, "value": "ps", "label": "pasaporte" }
   ],
   "municipality":[

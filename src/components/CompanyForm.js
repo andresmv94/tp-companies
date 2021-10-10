@@ -19,17 +19,38 @@ const schema = yup
   .object({
     identificationType: yup.string().required(),
     identificationNumber: yup.number().positive().integer().required(),
-    companyName: yup.string().trim(),
-    firstName: yup.string().trim(),
-    secondName: yup.string().trim(),
-    firstLastName: yup.string().trim(),
-    secondLastName: yup.string().trim(),
+    companyName: yup
+      .string()
+      .trim()
+      .matches(/^[aA-zZ\s]+$/),
+    firstName: yup
+      .string()
+      .trim()
+      .matches(/^[aA-zZ\s]+$/),
+    secondName: yup
+      .string()
+      .trim()
+      .matches(/^[aA-zZ\s]+$/),
+    firstLastName: yup
+      .string()
+      .trim()
+      .matches(/^[aA-zZ\s]+$/),
+    secondLastName: yup
+      .string()
+      .trim()
+      .matches(/^[aA-zZ\s]+$/),
     email: yup.string().email().trim().required(),
     via: yup.string().trim().required(),
     number: yup.number().positive().integer().required(),
-    letter: yup.string().trim(),
+    letter: yup
+      .string()
+      .trim()
+      .matches(/^[aA-zZ\s]+$/),
     number2: yup.number().positive().integer().required(),
-    letter2: yup.string().trim(),
+    letter2: yup
+      .string()
+      .trim()
+      .matches(/^[aA-zZ\s]+$/),
     complement: yup.string().trim().required(),
     municipality: yup.string().trim().required(),
     cellphone: yup.number().positive().integer().required(),
@@ -42,6 +63,7 @@ const msgErrors = {
   typeError: "es un campo requerido",
   email: "correo electrónico no valido",
   required: "Campo requerido",
+  matches: "Caracteres no permitidos",
 };
 
 function CompanyForm(props) {
@@ -66,38 +88,34 @@ function CompanyForm(props) {
   const [identificationType, setIdentificationType] = useState();
   const [dbMunicipality, setDbMunicipality] = useState();
   const [via, setVia] = useState();
-  const fetchData = async () => {
-    // fetch indetification type options
-    const responseIdentificationType = await fetch(
-      `${process.env.REACT_APP_JSON_SERVER_URL}/identificationType`
-    );
-    setIdentificationType(await responseIdentificationType.json());
-    const responseMunicipality = await fetch(
-      `${process.env.REACT_APP_JSON_SERVER_URL}/municipality`
-    );
-
-    // fetch municipality type options
-    const jsonMunicipality = await responseMunicipality.json();
-    const arrayOptions = [];
-    jsonMunicipality.forEach((element) =>
-      arrayOptions.push({ value: element.name, label: element.name })
-    );
-    setDbMunicipality(arrayOptions);
-
-    // fetch via options
-    const responseVia = await fetch(
-      `${process.env.REACT_APP_JSON_SERVER_URL}/via`
-    );
-    setVia(await responseVia.json());
-  };
-  useEffect(async () => {
-    setCurrentIdentificationType(company.identificationType);
-    await fetchData();
-  }, []);
-
   useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+    setCurrentIdentificationType(company.identificationType);
+    const fetchData = async () => {
+      // fetch indetification type options
+      const responseIdentificationType = await fetch(
+        `${process.env.REACT_APP_JSON_SERVER_URL}/identificationType`
+      );
+      setIdentificationType(await responseIdentificationType.json());
+      const responseMunicipality = await fetch(
+        `${process.env.REACT_APP_JSON_SERVER_URL}/municipality`
+      );
+
+      // fetch municipality type options
+      const jsonMunicipality = await responseMunicipality.json();
+      const arrayOptions = [];
+      jsonMunicipality.forEach((element) =>
+        arrayOptions.push({ value: element.name, label: element.name })
+      );
+      setDbMunicipality(arrayOptions);
+
+      // fetch via options
+      const responseVia = await fetch(
+        `${process.env.REACT_APP_JSON_SERVER_URL}/via`
+      );
+      setVia(await responseVia.json());
+    };
+    fetchData();
+  }, [company]);
 
   const onSubmit = async (data) => {
     setSubmitting(true);
@@ -106,14 +124,17 @@ function CompanyForm(props) {
       identificationType: data.identificationType,
       identificationNumber: data.identificationNumber,
       company: {
-        name: data.companyName || "",
+        name: data.identificationType !== "cc" ? data.companyName : "",
       },
-      person: {
-        firstName: data.firstName || "",
-        secondName: data.secondName || "",
-        firstLastName: data.firstLastName || "",
-        secondLastName: data.secondLastName || "",
-      },
+      person:
+        data.identificationType !== "cc"
+          ? null
+          : {
+              firstName: data.firstName || "",
+              secondName: data.secondName || "",
+              firstLastName: data.firstLastName || "",
+              secondLastName: data.secondLastName || "",
+            },
       email: data.email,
       address: {
         via: data.address,
@@ -153,7 +174,15 @@ function CompanyForm(props) {
   };
 
   if (!identificationType || !dbMunicipality || !via) {
-    return <div>Loading...</div>;
+    return (
+      <center>
+        <img src="/loading.svg" width="400px" style={{maxWidth:"100%"}} alt="Cargando" />
+        <br /> <h4>Cargando...</h4>{" "}
+        <a style={{ fontSize: 1 }} href="https://storyset.com/technology">
+          Technology illustrations by Storyset
+        </a>
+      </center>
+    );
   }
   return (
     <div>
@@ -213,7 +242,7 @@ function CompanyForm(props) {
             </Col>
           </Row>
         </Container>
-        {currentIdentificationType === "nit" ? (
+        {currentIdentificationType !== "cc" ? (
           <Container>
             <Row>
               <Col>
@@ -320,7 +349,7 @@ function CompanyForm(props) {
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col md={2}>
               <Form.Label>Vía:</Form.Label>
               <Form.Select
                 aria-label="Seleccione una..."
@@ -342,10 +371,10 @@ function CompanyForm(props) {
                 </Form.Control.Feedback>
               )}
             </Col>
-            <Col>
+            <Col xs={12} md={6}>
               <Container>
                 <Row>
-                  <Col>
+                  <Col xs={6} sm={3}>
                     <Form.Label>Número:</Form.Label>
                     <Form.Control
                       type="text"
@@ -361,7 +390,7 @@ function CompanyForm(props) {
                     )}
                   </Col>
 
-                  <Col>
+                  <Col xs={6} sm={3}>
                     <Form.Label>Letra:</Form.Label>
                     <Form.Control
                       type="text"
@@ -377,7 +406,7 @@ function CompanyForm(props) {
                     )}
                   </Col>
 
-                  <Col>
+                  <Col xs={6} sm={3}>
                     <Form.Label>Número:</Form.Label>
                     <Form.Control
                       type="text"
@@ -393,7 +422,7 @@ function CompanyForm(props) {
                     )}
                   </Col>
 
-                  <Col>
+                  <Col xs={6} sm={3}>
                     <Form.Label>Letra:</Form.Label>
                     <Form.Control
                       type="text"

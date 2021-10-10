@@ -2,9 +2,16 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## The JSON SERVER with the mock information is here
-visit [https://my-json-server.typicode.com/andresmv94/json-server-companies](https://my-json-server.typicode.com/andresmv94/json-server-companies) .
 
+# Observations
+
+## The JSON SERVER with the mock information is here
+visit [https://my-json-server.typicode.com/andresmv94/json-server-test](https://my-json-server.typicode.com/andresmv94/json-server-test), and you can change it in the .env file
+
+- Application programmed in VSCODE under Linux operating system
+- the .env file is not in the .gitignore file for test propose
+- this project is deployed in heroku free server (https://tp-company.herokuapp.com/)
+- Application developed in a time of approximately 7 hours
 
 ## Available Scripts
 
