@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## The JSON SERVER with the mock information is here
+visit [https://my-json-server.typicode.com/andresmv94/json-server-companies](https://my-json-server.typicode.com/andresmv94/json-server-companies) .
+
+
 ## Available Scripts
 
 In the project directory, you can run:
