@@ -22,35 +22,35 @@ const schema = yup
     companyName: yup
       .string()
       .trim()
-      .matches(/^[aA-zZ\s]+$/),
+      .matches(/^[aA-zZ\s]+$/,{ excludeEmptyString: true }),
     firstName: yup
       .string()
       .trim()
-      .matches(/^[aA-zZ\s]+$/),
+      .matches(/^[aA-zZ\s]+$/,{ excludeEmptyString: true }),
     secondName: yup
       .string()
       .trim()
-      .matches(/^[aA-zZ\s]+$/),
+      .matches(/^[aA-zZ\s]+$/,{ excludeEmptyString: true }),
     firstLastName: yup
       .string()
       .trim()
-      .matches(/^[aA-zZ\s]+$/),
+      .matches(/^[aA-zZ\s]+$/,{ excludeEmptyString: true }),
     secondLastName: yup
       .string()
       .trim()
-      .matches(/^[aA-zZ\s]+$/),
+      .matches(/^[aA-zZ\s]+$/,{ excludeEmptyString: true }),
     email: yup.string().email().trim().required(),
     via: yup.string().trim().required(),
     number: yup.number().positive().integer().required(),
     letter: yup
       .string()
       .trim()
-      .matches(/^[aA-zZ\s]+$/),
+      .matches(/^[aA-zZ\s]+$/,{ excludeEmptyString: true }),
     number2: yup.number().positive().integer().required(),
     letter2: yup
       .string()
       .trim()
-      .matches(/^[aA-zZ\s]+$/),
+      .matches(/^[aA-zZ\s]+$/,{ excludeEmptyString: true }),
     complement: yup.string().trim().required(),
     municipality: yup.string().trim().required(),
     cellphone: yup.number().positive().integer().required(),
@@ -119,6 +119,19 @@ function CompanyForm(props) {
 
   const onSubmit = async (data) => {
     setSubmitting(true);
+    if(data.identificationType !== "cc"){
+      if(data.companyName.trim() === ""){
+        setMsg(`El nombre de la empresa no puede ser vacío`);
+        setError(true);
+        return;
+      }
+    }else{
+      if(data.firstName.trim() === "" || data.firstLastName.trim() === ""){
+        setMsg(`El primer nombre y el primer apellido no pueden ser vacíos`);
+        setError(true);
+        return;
+      }
+    }
     // prepare data
     const objectUpdated = {
       identificationType: data.identificationType,
@@ -196,11 +209,14 @@ function CompanyForm(props) {
         {municipality[municipality.length - 1]}. Para acceder al servicio de
         trámites virtuales se utilizan los datos reportados en el registro.
       </Alert>
+      <Form.Text muted>
+        Campos con (*) requeridos
+      </Form.Text>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Container>
           <Row>
             <Col xs={12} md={6}>
-              <Form.Label>Tipo de indetificación:</Form.Label>
+              <Form.Label>* Tipo de indetificación:</Form.Label>
               <br />
               <Form.Select
                 aria-label="Seleccione una..."
@@ -226,7 +242,7 @@ function CompanyForm(props) {
               )}
             </Col>
             <Col xs={12} md={6}>
-              <Form.Label>Número de indentificación:</Form.Label>
+              <Form.Label>* Número de indentificación:</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Sólo numeros"
@@ -246,7 +262,7 @@ function CompanyForm(props) {
           <Container>
             <Row>
               <Col>
-                <Form.Label>Nombre de la empresa:</Form.Label>
+                <Form.Label>* Nombre de la empresa:</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Sólo letras"
@@ -266,7 +282,7 @@ function CompanyForm(props) {
           <Container>
             <Row>
               <Col xs={12} md={6}>
-                <Form.Label>Primer nombre:</Form.Label>
+                <Form.Label>* Primer nombre:</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Sólo letras"
@@ -298,7 +314,7 @@ function CompanyForm(props) {
             </Row>
             <Row>
               <Col xs={12} md={6}>
-                <Form.Label>Primer apellido:</Form.Label>
+                <Form.Label>* Primer apellido:</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Sólo letras"
@@ -333,7 +349,7 @@ function CompanyForm(props) {
         <Container>
           <Row>
             <Col>
-              <Form.Label>Correo eletrónico:</Form.Label>
+              <Form.Label>* Correo eletrónico:</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="direccion de correo válida aaaa@bbb.ccc"
@@ -350,7 +366,7 @@ function CompanyForm(props) {
           </Row>
           <Row>
             <Col md={2}>
-              <Form.Label>Vía:</Form.Label>
+              <Form.Label>* Vía:</Form.Label>
               <Form.Select
                 aria-label="Seleccione una..."
                 {...register("via")}
@@ -375,7 +391,7 @@ function CompanyForm(props) {
               <Container>
                 <Row>
                   <Col xs={6} sm={3}>
-                    <Form.Label>Número:</Form.Label>
+                    <Form.Label>*Número:</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Sólo Números"
@@ -407,7 +423,7 @@ function CompanyForm(props) {
                   </Col>
 
                   <Col xs={6} sm={3}>
-                    <Form.Label>Número:</Form.Label>
+                    <Form.Label>*Número:</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Sólo Números"
@@ -441,7 +457,7 @@ function CompanyForm(props) {
               </Container>
             </Col>
             <Col>
-              <Form.Label>Nro. y Complemetos:</Form.Label>
+              <Form.Label>* Nro. y Complemetos:</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Numero, barrio, conjunto, etc."
@@ -458,7 +474,7 @@ function CompanyForm(props) {
           </Row>
           <Row>
             <Col>
-              <Form.Label>Municipio:</Form.Label>
+              <Form.Label>* Municipio:</Form.Label>
               <Select
                 id="selectMunicipality"
                 name="selectMunicipality"
@@ -473,7 +489,7 @@ function CompanyForm(props) {
               />
             </Col>
             <Col>
-              <Form.Label>Telefono:</Form.Label>
+              <Form.Label>* Telefono:</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Sólo números"
